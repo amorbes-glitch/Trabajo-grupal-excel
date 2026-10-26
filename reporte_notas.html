@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Estad&iacute;stica de notas</title>
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background:
+        radial-gradient(ellipse at 8% 12%, #fce8f0 0, transparent 29rem),
+        radial-gradient(ellipse at 92% 38%, #e2f5fb 0, transparent 32rem),
+        #f5f7fb;
+      color: #1f2937;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 32px 18px; }
+    main { max-width: 1080px; margin: 0 auto; }
+    h1 { margin-bottom: 8px; color: #172554; }
+    h2 { color: #172554; }
+    .subtitle { margin-top: 0; color: #526176; }
+    .hero {
+      position: relative;
+      display: flex;
+      min-height: 220px;
+      align-items: flex-start;
+      overflow: hidden;
+      padding: 28px 32px;
+      border: 1px solid #e6eaf2;
+      border-radius: 20px;
+      background: linear-gradient(115deg, #fff0f5, #effbff 58%, #f1f9ec);
+      box-shadow: 0 8px 24px #1e293b0d;
+    }
+    .hero-copy { position: relative; z-index: 1; max-width: 620px; }
+    .kids-art {
+      position: absolute;
+      right: 8px;
+      bottom: 0;
+      width: min(48%, 450px);
+      height: 170px;
+    }
+    .course-rating {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px 14px;
+      margin-top: 18px;
+      color: #526176;
+    }
+    .stars {
+      position: relative;
+      display: inline-block;
+      color: #e6eaf0;
+      font-size: 1.55rem;
+      letter-spacing: 2px;
+      line-height: 1;
+    }
+    .stars-fill {
+      position: absolute;
+      inset: 0 auto 0 0;
+      overflow: hidden;
+      color: #f2bd4b;
+      white-space: nowrap;
+    }
+    .rating-value { color: #172554; font-weight: 700; }
+    .row-number { color: #64748b; font-variant-numeric: tabular-nums; }
+    .panel {
+      margin: 22px 0;
+      padding: 24px;
+      border: 1px solid #e1e8f0;
+      border-radius: 16px;
+      background: white;
+      box-shadow: 0 8px 24px #1e293b0d;
+    }
+    .bar-row {
+      display: grid;
+      grid-template-columns: 34px minmax(125px, 180px) minmax(100px, 1fr) 52px 90px;
+      align-items: center;
+      gap: 14px;
+      margin: 15px 0;
+    }
+    .student { font-weight: 600; }
+    .track {
+      height: 25px;
+      border-radius: 5px;
+      background: #edf1f6;
+      perspective: 500px;
+    }
+    .bar {
+      position: relative;
+      height: 20px;
+      min-width: 4px;
+      margin-top: 2px;
+      border-radius: 4px;
+      transform: rotateY(-12deg);
+      transform-origin: left center;
+      box-shadow: 0 5px 0 var(--side), 0 8px 12px #17255424;
+    }
+    .bar::before {
+      position: absolute;
+      top: -5px;
+      right: 2px;
+      left: 5px;
+      height: 5px;
+      background: var(--top);
+      content: "";
+      transform: skewX(-35deg);
+      transform-origin: bottom left;
+    }
+    .excellent { --color: #53c5e3; --side: #2895b3; --top: #8ce2f3; }
+    .good { --color: #ed83b8; --side: #c4558d; --top: #f6b2d2; }
+    .regular { --color: #65c98a; --side: #389c5e; --top: #9ae2b2; }
+    .bar.excellent, .swatch.excellent { background: var(--color); }
+    .bar.good, .swatch.good { background: var(--color); }
+    .bar.regular, .swatch.regular { background: var(--color); }
+    .grade { font-variant-numeric: tabular-nums; text-align: right; }
+    .category { color: #526176; font-size: .92rem; }
+    .axis {
+      display: flex;
+      justify-content: space-between;
+      margin: 10px 156px 0 242px;
+      color: #64748b;
+      font-size: .8rem;
+    }
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .summary-card { padding: 14px; border-radius: 10px; background: #f8fafc; }
+    .summary-card strong { display: block; margin-top: 5px; font-size: 1.5rem; }
+    .pie-layout {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 70px;
+      padding: 24px 0 34px;
+    }
+    .pie {
+      position: relative;
+      width: 230px;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background: conic-gradient(
+        #53c5e3 0deg 144.00deg, #ed83b8 144.00deg 288.00deg, #65c98a 288.00deg 360deg);
+      box-shadow: 0 13px 0 #d8e0e9, 0 20px 22px #17255424;
+    }
+    .pie-label {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      display: grid;
+      width: 88px;
+      height: 88px;
+      place-content: center;
+      border-radius: 50%;
+      background: white;
+      text-align: center;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 2px 8px #17255420;
+    }
+    .pie-label strong { font-size: 1.3rem; }
+    .legend { display: grid; gap: 14px; }
+    .legend-item { display: flex; align-items: center; gap: 10px; }
+    .swatch { width: 16px; height: 16px; border-radius: 4px; }
+    .note { color: #64748b; font-size: .9rem; }
+    @media (max-width: 650px) {
+      body { padding: 20px 12px; }
+      .panel { padding: 17px; }
+      .bar-row { grid-template-columns: 24px 1fr 48px; gap: 7px 10px; }
+      .row-number { grid-column: 1; grid-row: 1; }
+      .student { grid-column: 2; grid-row: 1; }
+      .grade { grid-column: 3; grid-row: 1; }
+      .track { grid-column: 1 / -1; grid-row: 2; }
+      .category { grid-column: 1 / -1; grid-row: 3; }
+      .axis { margin: 8px 0 0; }
+      .summary { grid-template-columns: 1fr; }
+      .pie-layout { gap: 30px; }
+      .hero { min-height: 250px; padding: 22px; }
+      .kids-art { right: 0; width: 72%; height: 120px; opacity: .75; }
+      .hero-copy { padding-bottom: 95px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header class="hero">
+      <div class="hero-copy">
+        <h1>Cuadro estad&iacute;stico de notas</h1>
+        <p class="subtitle">Promedios de P1, P2 y P3 sobre 20, ordenados de mayor a menor.</p>
+        <div class="course-rating">
+          <span>Calificaci&oacute;n general del curso</span>
+          <span class="stars" role="img" aria-label="17.50 de 20; 4.38 de 5 estrellas">
+            <span class="stars-fill" style="width: 87.5%">★★★★★</span>★★★★★
+          </span>
+          <span class="rating-value">17.50/20 · 4.38/5</span>
+        </div>
+      </div>
+      <svg class="kids-art" viewBox="0 0 450 170" aria-hidden="true">
+        <path d="M10 157 Q225 135 440 157 L450 180 L0 180Z" fill="#dff2df"/>
+        <circle cx="72" cy="42" r="18" fill="#f3c9a7"/>
+        <path d="M54 42 Q57 16 78 23 Q91 27 90 44 Q81 32 70 34 Q62 41 54 42Z" fill="#71564e"/>
+        <path d="M45 150 Q48 82 72 76 Q99 83 102 150Z" fill="#a9ddec"/>
+        <path d="M55 91 L32 121 M91 92 L113 115" fill="none" stroke="#f3c9a7" stroke-width="10" stroke-linecap="round"/>
+        <circle cx="72" cy="48" r="2" fill="#364152"/><circle cx="84" cy="48" r="2" fill="#364152"/>
+        <path d="M72 57 Q78 63 85 57" fill="none" stroke="#c56f69" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="190" cy="35" r="20" fill="#f0c7a6"/>
+        <path d="M170 38 Q169 11 192 14 Q210 16 211 39 Q199 27 184 29Z" fill="#51483e"/>
+        <path d="M157 150 Q160 78 190 72 Q222 79 226 150Z" fill="#f4b8d0"/>
+        <path d="M168 91 L144 112 M215 92 L239 113" fill="none" stroke="#f0c7a6" stroke-width="10" stroke-linecap="round"/>
+        <circle cx="185" cy="42" r="2" fill="#364152"/><circle cx="198" cy="42" r="2" fill="#364152"/>
+        <path d="M185 52 Q192 58 200 52" fill="none" stroke="#c56f69" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="319" cy="43" r="18" fill="#d9a982"/>
+        <path d="M301 43 Q303 20 321 22 Q339 24 338 44 Q326 33 313 35Z" fill="#403a38"/>
+        <path d="M289 150 Q291 83 318 77 Q348 82 351 150Z" fill="#cbb8eb"/>
+        <path d="M300 93 L277 117 M343 94 L366 115" fill="none" stroke="#d9a982" stroke-width="10" stroke-linecap="round"/>
+        <circle cx="313" cy="48" r="2" fill="#364152"/><circle cx="326" cy="48" r="2" fill="#364152"/>
+        <path d="M313 57 Q320 63 328 57" fill="none" stroke="#a85e59" stroke-width="2" stroke-linecap="round"/>
+        <path d="M390 29 l4 9 10 1-8 6 3 10-9-6-9 6 3-10-8-6 10-1z" fill="#f4d57d" opacity=".9"/>
+      </svg>
+    </header>
+    <section class="panel">
+      <h2>Promedio por estudiante — gr&aacute;fico de barras 3D</h2>
+      <p class="note">Las barras muestran el promedio en una escala de 0 a 20.</p>
+      <div class="bar-row">
+        <span class="row-number">1.</span>
+        <span class="student">Pamela Obando</span>
+        <div class="track"><div class="bar excellent" style="width: 91.7%"></div></div>
+        <span class="grade">18.33</span>
+        <span class="category">Excelente</span>
+      </div>
+      <div class="bar-row">
+        <span class="row-number">2.</span>
+        <span class="student">Amy Orbes</span>
+        <div class="track"><div class="bar excellent" style="width: 90.0%"></div></div>
+        <span class="grade">18.00</span>
+        <span class="category">Excelente</span>
+      </div>
+      <div class="bar-row">
+        <span class="row-number">3.</span>
+        <span class="student">Andy Ayala</span>
+        <div class="track"><div class="bar excellent" style="width: 90.0%"></div></div>
+        <span class="grade">18.00</span>
+        <span class="category">Excelente</span>
+      </div>
+      <div class="bar-row">
+        <span class="row-number">4.</span>
+        <span class="student">Camila Ligua</span>
+        <div class="track"><div class="bar excellent" style="width: 90.0%"></div></div>
+        <span class="grade">18.00</span>
+        <span class="category">Excelente</span>
+      </div>
+      <div class="bar-row">
+        <span class="row-number">5.</span>
+        <span class="student">Lizbeth Mayla</span>
+        <div class="track"><div class="bar good" style="width: 88.3%"></div></div>
+        <span class="grade">17.67</span>
+        <span class="category">Bueno</span>
+      </div>
+      <div class="bar-row">
+        <span class="row-number">6.</span>
+        <span class="student">Malany Ona</span>
+        <div class="track"><div class="bar good" style="width: 86.7%"></div></div>
+        <span class="grade">17.33</span>
+        <span class="category">Bueno</span>
+      </div>
+      <div class="bar-row">
+        <span class="row-number">7.</span>
+        <span class="student">Raquel Chimbolema</span>
+        <div class="track"><div class="bar good" style="width: 86.7%"></div></div>
+        <span class="grade">17.33</span>
+        <span class="category">Bueno</span>
+      </div>
+      <div class="bar-row">
+        <span class="row-number">8.</span>
+        <span class="student">Yudith Lagla</span>
+        <div class="track"><div class="bar good" style="width: 86.7%"></div></div>
+        <span class="grade">17.33</span>
+        <span class="category">Bueno</span>
+      </div>
+      <div class="bar-row">
+        <span class="row-number">9.</span>
+        <span class="student">Alejandra Guevara</span>
+        <div class="track"><div class="bar regular" style="width: 83.3%"></div></div>
+        <span class="grade">16.67</span>
+        <span class="category">Regular</span>
+      </div>
+      <div class="bar-row">
+        <span class="row-number">10.</span>
+        <span class="student">Melany Guaman</span>
+        <div class="track"><div class="bar regular" style="width: 81.7%"></div></div>
+        <span class="grade">16.33</span>
+        <span class="category">Regular</span>
+      </div>
+      <div class="axis"><span>0</span><span>5</span><span>10</span><span>15</span><span>20</span></div>
+    </section>
+    <section class="panel">
+      <h2>Distribuci&oacute;n por categor&iacute;a — gr&aacute;fico de pastel 3D</h2>
+      <div class="pie-layout">
+        <div class="pie" role="img" aria-label="Gr&aacute;fico de pastel con la proporci&oacute;n de excelentes, buenos y regulares">
+          <div class="pie-label"><strong>10</strong><span>estudiantes</span></div>
+        </div>
+        <div class="legend">
+          <div class="legend-item"><span class="swatch excellent"></span><span>Excelente (18 a 20): <strong>4 (40.0%)</strong></span></div>
+          <div class="legend-item"><span class="swatch good"></span><span>Bueno (17 a menos de 18): <strong>4 (40.0%)</strong></span></div>
+          <div class="legend-item"><span class="swatch regular"></span><span>Regular (menos de 17): <strong>2 (20.0%)</strong></span></div>
+        </div>
+      </div>
+      <p class="note">Excelente: celeste · Bueno: rosado · Regular: verde</p>
+    </section>
+  </main>
+</body>
+</html>
